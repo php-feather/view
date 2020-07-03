@@ -19,7 +19,7 @@ class TwigEngine extends Twig implements ViewInterface {
      * @return ViewInterface
      */
     public static function getInstance($basePath, $cachePath, array $options = array()): ViewInterface {
-        $viewPath = strripos($path,'/') === strlen($path)-1? $path : $path.'/';        
+        $viewPath = strripos($basePath,'/') === strlen($basePath)-1? $basePath : $basePath.'/';        
         $loader = new FilesystemLoader($viewPath, $viewPath);
         $engine = new TwigEngine($loader, $options);
         return $engine;
