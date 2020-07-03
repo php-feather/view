@@ -8,7 +8,7 @@ use Feather\View\ViewInterface;
  *
  * @author fcarbah
  */
-class ViewEngine implements ViewInterface {
+class NativeEngine implements ViewInterface {
     
     /**
      * Absolute path to views folder
@@ -79,6 +79,19 @@ class ViewEngine implements ViewInterface {
         }else{
             $this->tempViewPath = strripos($tempPath,'/') === strlen($tempPath)-1? $tempPath : $tempPath.'/';
         }
+    }
+    
+    /**
+     * 
+     * @param string $basePath
+     * @param string $cachePath
+     * @param array $options
+     * @return ViewInterface
+     */
+    public static function getInstance($basePath, $cachePath, array $options = array()): \Feather\View\ViewInterface {
+        $engine = new NativeEngine();
+        $engine->setPaths($basePath, $cachePath);
+        return $engine;
     }
     
     protected function setTemplates($keys,$view){

@@ -18,7 +18,9 @@ interface ViewInterface {
      * 
      * @param string $basePath
      * @param string $cachePath
+     * @param array $options
+     * @return \Feather\View\ViewInterface
      */
-    public function setPaths($basePath,$cachePath);
+    public static function getInstance($basePath,$cachePath,array $options=[]);
     
 }

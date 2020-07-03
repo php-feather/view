@@ -11,10 +11,18 @@ use Feather\View\ViewInterface;
  */
 class TwigEngine extends Twig implements ViewInterface {
     
-    public function setPaths($basePath, $cachePath='') {
+    /**
+     * 
+     * @param string $basePath
+     * @param string $cachePath
+     * @param array $options
+     * @return ViewInterface
+     */
+    public static function getInstance($basePath, $cachePath, array $options = array()): ViewInterface {
         $viewPath = strripos($path,'/') === strlen($path)-1? $path : $path.'/';        
         $loader = new FilesystemLoader($viewPath, $viewPath);
-        $this->setLoader($loader);
+        $engine = new TwigEngine($loader, $options);
+        return $engine;
     }
 
 }
