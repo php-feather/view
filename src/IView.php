@@ -6,7 +6,7 @@ namespace Feather\View;
  *
  * @author fcarbah
  */
-interface ViewInterface {
+interface IView {
     /**
      * 
      * @param string $view
@@ -19,7 +19,7 @@ interface ViewInterface {
      * @param string $basePath
      * @param string $cachePath
      * @param array $options
-     * @return \Feather\View\ViewInterface
+     * @return \Feather\View\IView
      */
     public static function getInstance($basePath,$cachePath,array $options=[]);
     
