@@ -1,6 +1,6 @@
 <?php
 
-namespace Feather\View\Engine;
+namespace Feather\View;
 
 use Feather\View\IView;
 
@@ -18,6 +18,9 @@ class Native implements IView
      */
     protected $basePath;
 
+    /** @var int * */
+    protected $obLevel;
+
     /**
      *
      * @var string
@@ -27,19 +30,38 @@ class Native implements IView
 
     /**
      *
-     * @param type $view
-     * @param array $data
+     * @param string $baseDir Absolute path of base/root directory of views path
+     * @param string $cacheDir
      */
-    public function render($view, array $data)
+    public function __construct(string $baseDir, $cacheDir = '')
     {
-        $this->output = $this->renderTemplate($view, $data);
-        return $this->output;
+        $this->setPaths($baseDir, $cacheDir);
+    }
+
+    /**
+     * Renders a PHP view
+     * @param string $view View path relative to absolute path
+     * @param array $data
+     * @return string
+     */
+    public function render(string $view, array $data): string
+    {
+        try {
+            $this->output = $this->renderTemplate($view, $data);
+            return $this->output;
+        } catch (\Exception $e) {
+            while (ob_get_level() > $this->obLevel) {
+                ob_end_clean();
+            }
+            throw new \RuntimeException($e->getMessage(), $e->getCode());
+        }
     }
 
     /**
      *
      * @param string $view
      * @param array $data
+     * @throws Exception
      * @return string
      */
     protected function renderTemplate($view, $data = array())
@@ -48,14 +70,16 @@ class Native implements IView
         $this->startViewRender();
 
         foreach ($data as $key => $val) {
-            //global ${$key};
             ${$key} = $val;
         }
 
         $viewPath = $this->viewPath . $view;
 
         $filename = $this->setTemplates(array_keys($data), $viewPath);
-
+        if ($view == 'home.php') {
+            var_dump($viewPath, $filename);
+            die;
+        }
         if ($filename == NULL) {
 
             $filename = set_variables(array_keys($data));
@@ -86,20 +110,6 @@ class Native implements IView
         } else {
             $this->tempViewPath = strripos($tempPath, '/') === strlen($tempPath) - 1 ? $tempPath : $tempPath . '/';
         }
-    }
-
-    /**
-     *
-     * @param string $basePath
-     * @param string $cachePath
-     * @param array $options
-     * @return IView
-     */
-    public static function getInstance($basePath, $cachePath, array $options = array()): \Feather\View\IView
-    {
-        $engine = new Native();
-        $engine->setPaths($basePath, $cachePath);
-        return $engine;
     }
 
     /**
@@ -149,10 +159,11 @@ class Native implements IView
     }
 
     /**
-     * 
+     *
      */
     protected function startViewRender()
     {
+        $this->obLevel = ob_get_level();
         ob_start();
     }
 
