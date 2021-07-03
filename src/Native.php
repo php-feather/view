@@ -76,10 +76,7 @@ class Native implements IView
         $viewPath = $this->viewPath . $view;
 
         $filename = $this->setTemplates(array_keys($data), $viewPath);
-        if ($view == 'home.php') {
-            var_dump($viewPath, $filename);
-            die;
-        }
+
         if ($filename == NULL) {
 
             $filename = set_variables(array_keys($data));
