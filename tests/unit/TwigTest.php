@@ -31,7 +31,7 @@ class TwigTest extends TestCase
     public function willRenderTwigView()
     {
         $data = ['title' => 'Native PHP View Renderer'];
-        $file = 'index.twig';
+        $file = 'admin.twig';
         $contents = static::$viewEngine->render($file, $data);
         $this->assertTrue(trim($contents) == $data['title']);
     }

@@ -69,9 +69,7 @@ class Native implements IView
 
         $this->startViewRender();
 
-        foreach ($data as $key => $val) {
-            ${$key} = $val;
-        }
+        extract($data);
 
         $viewPath = $this->viewPath . $view;
 

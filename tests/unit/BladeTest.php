@@ -1,23 +1,23 @@
 <?php
 
-use Feather\View\Native;
 use PHPUnit\Framework\TestCase;
+use Feather\View\Blade;
 
 /**
- * Description of NativeTest
+ * Description of BladeTest
  *
  * @author fcarbah
  */
-class NativeTest extends TestCase
+class BladeTest extends TestCase
 {
 
-    /** @var \Feather\View\IView * */
     protected static $viewEngine;
 
     public static function setUpBeforeClass(): void
     {
         $path = dirname(__FILE__, 2) . '/views';
-        static::$viewEngine = new Native($path);
+
+        static::$viewEngine = new Blade($path, $path);
     }
 
     public static function tearDownAfterClass(): void
@@ -28,46 +28,59 @@ class NativeTest extends TestCase
     /**
      * @test
      */
+    public function willRenderValidBladeView()
+    {
+        $data = ['title' => 'Native PHP View Renderer'];
+        $file = 'home';
+        $contents = static::$viewEngine->render($file, $data);
+        $expectedText = '<h3>Title: ' . $data['title'] . '</h3>';
+        $this->assertTrue(trim($contents) == $expectedText);
+    }
+
+    /**
+     * @test
+     */
     public function willRenderValidPhpView()
     {
         $data = ['title' => 'Native PHP View Renderer'];
-        $file = 'index.php';
+        $file = 'index';
         $contents = static::$viewEngine->render($file, $data);
         $this->assertTrue(trim($contents) == $data['title']);
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function willNotRenderNonPhpView()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $data = ['title' => 'Native PHP View Renderer'];
-        $file = 'admin.twig';
+        $file = 'admin';
         $contents = static::$viewEngine->render($file, $data);
         $this->assertFalse(trim($contents) == $data['title']);
     }
 
     /**
      * @test
-     * @expectedException \RuntimeException
+     * @expectedException \InvalidArgumentException
      */
     public function willThrowExceptionForMissingView()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $data = ['title' => 'Native PHP View Renderer'];
-        $file = 'home.php';
+        $file = 'test';
         static::$viewEngine->render($file, $data);
     }
 
     /**
      * @test
-     * @expectedException \RuntimeException
      */
     public function willThrowExceptionForMissingViewData()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectNotice();
         $data = ['text' => 'Native PHP View Renderer'];
-        $file = 'index.php';
+        $file = 'index';
         static::$viewEngine->render($file, $data);
     }
 
