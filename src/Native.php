@@ -47,7 +47,7 @@ class Native implements IView
     public function render(string $view, array $data): string
     {
         try {
-            $this->output = $this->renderTemplate($view, $data);
+            $this->output = $this->renderTemplate(trim($view), $data);
             return $this->output;
         } catch (\Exception $e) {
             while (ob_get_level() > $this->obLevel) {
@@ -66,6 +66,10 @@ class Native implements IView
      */
     protected function renderTemplate($view, $data = array())
     {
+
+        if (!preg_match('/(\.php)$/i', $view)) {
+            $view .= '.php';
+        }
 
         $this->startViewRender();
 
